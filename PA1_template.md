@@ -1,14 +1,16 @@
 # Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 adf <- read.csv("~/RR/P2P1/RepData_PeerAssessment1/activity.csv", header=TRUE)
 adf$date <- as.Date(adf$date, "%Y-%m-%d")
 library("ggplot2", lib.loc="~/R/win-library/3.1")
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 countSteps <- function(adf) {
   # find all the dates in the dataset
    Dates <- as.Date(strftime(adf$date, "%Y-%m-%d"))
@@ -24,20 +26,33 @@ sc <- countSteps(adf)
 hist(sc$steps, main='Histogram of Total Steps per Day', xlab='Total Steps Per Day')
 ```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
 mean steps per day is:
 
-```{r}
+
+```r
 mean(sc$steps, na.rm=TRUE)
+```
+
+```
+## [1] 10766
 ```
 
 median steps per day is:
 
-```{r}
+
+```r
 median(sc$steps, na.rm=TRUE)
 ```
 
+```
+## [1] 10765
+```
+
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 avgSteps <- function(adf) {
    # get all the valid interval values
    allIntervals <- unique(adf$interval)
@@ -51,45 +66,64 @@ sa <- avgSteps(adf)
 
 Average Daily Activity Pattern Plot:
 
-```{r}
+
+```r
 # plot the result of the calculation x-axis as interval from 0000 to 2355, y-axis computer average over the days of that interval
 p <- ggplot(sa, aes(x=interval, y=avg_steps))
 p + geom_line()
 ```
 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+
 Interval with maximum number of steps per day on average:
 
-```{r}
+
+```r
 sa[sa$avg_steps==max(sa$avg_steps),]
+```
+
+```
+##     interval avg_steps
+## 104      835     206.2
 ```
 
 ## Imputing missing values
 
 Number of steps values which are = NA:
 
-```{r}
+
+```r
 sum(is.na(adf$steps))
+```
+
+```
+## [1] 2304
 ```
 
 Setting NA entries to mean of steps in total...
 
-```{r}
+
+```r
 naddf <- adf
 naddf$steps[is.na(naddf$steps)] <- mean(naddf$steps, na.rm=TRUE)
 ```
 
 Histogram of total number of steps after missing values are imputed:
 
-```{r}
+
+```r
 simp <- countSteps(naddf)
 hist(simp$steps, main='Histogram of Total Steps per Day (Imputed)', xlab='Total Steps Per Day')
 ```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
 
 Note that in this case imputing can change the total steps, though in this case not materially for the plot.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 wday <- weekdays(naddf$date, abbreviate = TRUE)
 wadf <- cbind(naddf,wday)
 wadf$wday <- as.character(wadf$wday)
@@ -101,12 +135,12 @@ wadf$wday[wadf$wday=="Fri"] <- "weekday"
 wadf$wday[wadf$wday=="Sat"] <- "weekend"
 wadf$wday[wadf$wday=="Sun"] <- "weekend"
 wadf$wday <- as.factor(wadf$wday)
-
 ```
 
 Weekend/Weekday daily activity profile:
 
-```{r}
+
+```r
 wkday <- avgSteps(wadf[wadf$wday=='weekday',])
 # plot the result of the calculation x-axis as interval from 0000 to 2355, y-axis computer average over the days of that interval
 p1 <- ggplot(wkday, aes(x=interval, y=avg_steps)) + geom_line() + ggtitle("weekday")
@@ -163,5 +197,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 multiplot(p1,p2,cols=2)
 ```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
 The answer is yes, there is a considerable difference between the weekday and weekend activity profiles.
