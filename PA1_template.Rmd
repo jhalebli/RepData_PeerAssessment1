@@ -115,7 +115,7 @@ wkend <- avgSteps(wadf[wadf$wday=='weekend',])
 # plot the result of the calculation x-axis as interval from 0000 to 2355, y-axis computer average over the days of that interval
 p2 <- ggplot(wkend, aes(x=interval, y=avg_steps)) + geom_line() + ggtitle("weekend")
 
-# Multiple plot function
+# Multiple plot function (From http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/)
 #
 # ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
 # - cols:   Number of columns in layout
@@ -161,7 +161,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-multiplot(p1,p2,cols=2)
+# multiplot(p1,p2,cols=2)
+require(gridExtra)
+grid.arrange(p1, p2, ncol=2)
 ```
 
 The answer is yes, there is a considerable difference between the weekday and weekend activity profiles.
